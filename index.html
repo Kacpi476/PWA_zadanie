@@ -45,7 +45,7 @@
     </main>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        var map = L.map('map').setView([51.505, -0.09], 13);
+        const map = L.map('map').setView([50.3, 19.57], 13);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
         let marker;
         const video = document.querySelector('#player');
