@@ -1,6 +1,6 @@
 {
-  "name": "GeoSnap Finder PWA",
-  "short_name": "GeoSnap",
+  "name": "GeoPhoto Finder PWA",
+  "short_name": "GeoPhoto",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
