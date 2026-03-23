@@ -1,4 +1,4 @@
-const CACHE_NAME = 'geosnap-v1';
+const CACHE_NAME = 'GeoPhoto';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
