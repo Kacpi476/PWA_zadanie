@@ -9,6 +9,8 @@
     <style>
         .app-header { background: #2e7d32; color: white; padding: 20px 0; margin-bottom: 20px; }
         #map { height: 300px; border-radius: 10px; margin-bottom: 20px; }
+        #player { width: 100%; border-radius: 10px; background: #000; }
+        #canvas { display: none; }
     </style>
 </head>
 <body class="bg-light">
@@ -22,9 +24,10 @@
             <div class="col-md-6 mb-4">
                 <div class="card shadow-sm">
                     <div class="card-body">
-                        <h5 class="card-title">Zrób zdjęcie znaleziska</h5>
-                        <div></div>
-                        <button class="btn btn-success w-100 mt-3">Zapisz Odkrycie</button>
+                        <h5 class="card-title">Zrób zdjęcie GeoCatcha</h5>
+                        <video id="player" autoplay playsinline></video>
+                        <canvas id="canvas" width="640" height="480"></canvas>
+                        <button id="capture" class="btn btn-success w-100 mt-3">Zapisz lokalizacje</button>
                     </div>
                 </div>
             </div>
@@ -34,7 +37,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Twoja Lokalizacja</h5>
                         <div id="map"></div>
-                        <button class="btn btn-primary w-100">Udostępnij Znalezisko</button>
+                        <button id="share" class="btn btn-primary w-100">Udostępnij§</button>
                     </div>
                 </div>
             </div>
@@ -45,7 +48,49 @@
         var map = L.map('map').setView([51.505, -0.09], 13);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
         let marker;
-        
+        const video = document.querySelector('#player');
+        const canvas = document.querySelector('#canvas');
+        const captureButton = document.querySelector('#capture');
+
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+            .then(stream => { video.srcObject = stream; });
+
+        captureButton.addEventListener('click', () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+
+                    map.setView([lat, lng], 15);
+                    if (marker) map.removeLayer(marker);
+                    marker = L.marker([lat, lng]).addTo(map)
+                        .bindPopup("Nowe znalezione miejsce !!!").openPopup();
+
+                    const context = canvas.getContext('2d');
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    
+                    alert("Pozycja zapisana na mapie!");
+                });
+            }
+        });
+
+        document.querySelector('#share').addEventListener('click', async () => {
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'Moje znalezisko !!!',
+                        text: 'Spójrz, co udało mi się dziś znaleźć!',
+                        url: window.location.href
+                    });
+                } catch (err) { console.log("Błąd udostępniania"); }
+            }
+        });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js');
+            });
+        }
     </script>
 
 </body>
