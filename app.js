@@ -17,10 +17,23 @@ let currentCoords = { lat: 0, lng: 0 };
             currentCoords.lng = position.coords.longitude;
             
             alert(`Znalezisko zarejestrowane! Współrzędne: ${currentCoords.lat}, ${currentCoords.lng}`);
-            // Tutaj możesz dodać kod Leaflet.js, aby postawić pinezkę na mapie 
+            
         });
     }
 });
+const shareButton = document.querySelector('#share');
+    shareButton.addEventListener('click', async () => {
+    const shareData = {
+        title: 'Moje znalezisko Geocache!',
+        text: `Znalazłem skrytkę na współrzędnych: ${currentCoords.lat}, ${currentCoords.lng}`,
+        url: window.location.href
+    };
 
-    
-    //asdadsasd
+    try {
+        await navigator.share(shareData);
+        console.log('Udostępniono pomyślnie');
+    } catch (err) {
+        console.error('Błąd udostępniania:', err);
+    }
+});
+
